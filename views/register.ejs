@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>注册</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.css"/>
+    <link rel='stylesheet' href='/stylesheets/common.css' />	
+	<link rel='stylesheet' href='/stylesheets/login.css' />
+    <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_1462202_855ag0d67li.css"/>	
+    <script src="/javascripts/jquery-1.11.0.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/javascripts/md5.js" type="text/javascript" charset="utf-8"></script>
+  </head>
+  <body>
+	<div class="zoomBox"></div>
+    <div class="container">
+    	<div class="inputBox">
+			<i class="iconfont icon-yonghuming"></i>
+			<input type="text" class="inputArea" id="username" placeholder="username" autocomplete="off"/>
+		</div>
+		<div class="inputBox">
+			<i class="iconfont icon-mima"></i>
+			<input type="password" class="inputArea" id="password" placeholder="password" autocomplete="off"/>
+			<i class="iconfont icon-yanjing"></i>
+		</div>
+			<button class="btns registerBtn">注册</button>
+    </div>
+  </body>
+  <script type="text/javascript">
+  	$(".registerBtn").on("click",function(){
+  		let password = md5($("#password").val());
+  		$.ajax({
+  			type:"post",
+  			url:"/users/register",
+  			data:{
+  				"username":$("#username").val(),
+  				"password":password
+  			},
+  			success:function(data){
+				  console.log(data);
+				  alert(data.msg);
+				  if(data.msg == 'success'){
+					location.href = '/login';
+				  }
+				  
+  			}
+  		});
+  	});
+  </script>
+</html>

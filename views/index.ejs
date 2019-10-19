@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>首页</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel="stylesheet" href="//cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/index.css" />
+  <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_1462202_855ag0d67li.css"/>
+  <script src="/javascripts/jquery-1.11.0.js"></script>
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/js/bootstrap.js"></script>
+
+
+	<script src="//cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="//cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <nav class="navbar navbar-default nav-fixed-top">
+    <div class="container">
+
+        <button class="btn btn-primary" onclick="location.href='/boke'">发布文章</button>
+
+        <% if(username){ %>
+          <button class="btn btn-primary">欢迎：<%= username %></button>
+          <button class="btn btn-primary" onclick="location.href='/relogin'">退出登录</button>
+          <!-- <button class="verify">登录是否过期</button> -->
+          <% }else{ %>
+            <button class="btn btn-primary" onclick="location.href='/login'">登录</button>
+            <button class="btn btn-primary" onclick="location.href='/register'">注册</button>
+            <!-- <button class="test">英雄人物</button> -->
+          <% } %>
+
+
+    </div>
+  </nav>
+
+
+
+
+
+  <!-- banner图 -->
+  <div id="myCarousel" class="carousel slide">
+      <!-- 轮播（Carousel）指标 -->
+      <ol class="carousel-indicators">
+          <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+          <li data-target="#myCarousel" data-slide-to="1"></li>
+          <li data-target="#myCarousel" data-slide-to="2"></li>
+      </ol>   
+      <!-- 轮播（Carousel）项目 -->
+      <div class="carousel-inner">
+          <div class="item active">
+              <img src="/images/banner1.png" alt="First slide">
+          </div>
+          <div class="item">
+              <img src="/images/banner2.jpg" alt="Second slide">
+          </div>
+          <div class="item">
+              <img src="/images/banner3.jpg" alt="Third slide">
+          </div>
+      </div>
+      <!-- 轮播（Carousel）导航 -->
+      <a class="carousel-control left" href="#myCarousel" 
+         data-slide="prev"> <span _ngcontent-c3="" aria-hidden="true" class="glyphicon glyphicon-chevron-left"></span></a>
+      <a class="carousel-control right" href="#myCarousel" 
+         data-slide="next"><span _ngcontent-c3="" aria-hidden="true" class="glyphicon glyphicon-chevron-right"></span></a>
+  </div>
+
+  
+
+
+  <table class="table">
+    <% data.map((item,i)=>{ %>
+    <tr>
+      <td>
+        <% if(item.titleImg){ %>
+          <img src="<%-item.titleImg %>" style="width: 150px;height: 124px;" >
+        <% }else{ %>
+          <img src="/images/deafultImg.jpg" style="width: 150px;height: 124px;" >
+        <% } %>
+      </td>
+      <td>
+        <a href="detail?id=<%-item._id %>">
+          <h3><%-item.title %></h3>
+        </a>
+        <div class="content"><%-item.content %></div>
+        <span><%-item.time %></span>
+      </td>
+      <td> <i class="iconfont icon-xiugai modifyBtn" data-id="<%-item._id %>"></i> </td>
+      <td> <button class="btn btn-danger deleteBtn" data-id="<%-item._id %>">删除</button> </td>
+    </tr>
+    <% }) %>
+  </table>
+
+
+
+
+  
+
+  <nav aria-label="Page navigation" class="pageNav">
+    <ul class="pagination">
+      <li>
+        <a href="?pageNo=<%-pageNo<=1?1:parseInt(pageNo)-1 %>" aria-label="Previous">
+          <span aria-hidden="true">上一页</span>
+        </a>
+      </li>
+
+      <% if(page>5){ %>
+        
+        <li><a href="?pageNo=1">1</a></li>
+        <li><a href="?pageNo=2">2</a></li>
+        <li><a href="#">...</a></li>
+        <li><a href="?pageNo=<%-page-1 %>"><%-page-1 %></a></li>
+        <li><a href="?pageNo=<%-page %>"><%-page %></a></li>
+      <% }else{ %>
+        <% for(let i=0;i<page;i++){ %>
+            <li><a href="?pageNo=<%-i+1 %>"><%-i+1 %></a></li>
+        <% } %>
+      <% } %>
+
+      
+
+      <li>
+        <a href="?pageNo=<%-pageNo>=page?page:parseInt(pageNo)+1 %>" aria-label="Next">
+          <span aria-hidden="true">下一页</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+
+
+</body>
+<script>
+  // 轮播图会自动播放
+$('#myCarousel').carousel({
+    interval: 2000
+})
+
+
+  $(".test").on("click", function () {
+    $.ajax({
+      type: "get",
+      url: "/herolist.json",
+      dataType: 'json',
+      success: function (data) {
+        console.log(data);
+      }
+    });
+
+  });
+
+
+  // 判断登录是否过期
+  $(".verify").on("click", function () {
+    $.ajax({
+      type: "post",
+      url: "/jiaoyan",
+      headers: {
+        token: localStorage.getItem("token")
+      },
+      dataType: 'json',
+      success: function (data) {
+        console.log(data);
+      }
+    })
+  });
+
+
+  // 删除文章按钮
+  $(".deleteBtn").on("click", function () {
+    let id = $(this).attr("data-id");
+    
+    $.ajax({
+      type: 'post',
+      url: '/users/deleteBoke',
+      data: {
+        id: id
+      },
+      success: function (data) {
+        console.log(data);
+        alert(data.msg);
+        location.href = '/';
+      }
+    });
+  });
+
+
+  //修改按钮
+  $(".modifyBtn").on("click",function(){
+    let id = $(this).attr("data-id");
+    console.log(id);
+    location.href = '/boke?id='+id;
+  });
+
+</script>
+
+</html>

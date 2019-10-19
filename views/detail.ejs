@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>博客详情</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.css" />
+  <script src="/javascripts/jquery-1.11.0.js" type="text/javascript" charset="utf-8"></script>
+  <style>
+    
+    .container{
+      overflow: auto;
+    }
+    .title{
+      font-weight: bold;
+      text-align: center;
+    }
+    .detailtop{
+      width: 100%;
+      text-align: center;
+      position: relative;
+      margin-bottom: 2rem;
+    }
+    .detailtop img{
+      width: 90%;
+    }
+    .detailtop .userStyle{
+      font-weight: bold;
+      color: #fff;
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%);
+    }
+    .detailtop .user1Style{
+      top: 20px;
+    }
+    .detailtop .user2Style{
+      top: 100px;
+    }
+    .detailtop .fabuBtn{
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translate(-50%);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+
+    <div class="detailtop">
+      <img src="/images/bg_4.jpg">
+      <h1 class="userStyle user1Style"><%-username %></h1>
+      <h2 class="userStyle user2Style">Welcome to my website.</h2>
+      <button class="btn btn-primary fabuBtn" onclick="location.href='/boke'">发布文章</button>
+    </div>
+
+    <h3 class="title"><%-data.title %></h3>
+    <p><%-data.content %></p>
+    <span><%-data.time %></span>
+  </div>
+</body>
+
+</html>

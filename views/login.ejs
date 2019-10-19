@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>登录</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.css"/>
+    <link rel='stylesheet' href='/stylesheets/common.css' />
+    <link rel='stylesheet' href='/stylesheets/login.css' />
+    <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_1462202_855ag0d67li.css"/>
+    <script src="/javascripts/jquery-1.11.0.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/javascripts/md5.js" type="text/javascript" charset="utf-8"></script>
+  </head>
+  <body>
+  	<div class="zoomBox"></div>
+    <div class="container">
+    	<div class="inputBox">
+    		<i class="iconfont icon-yonghuming"></i>
+    		<input type="text" class="inputArea" id="username" placeholder="username" autocomplete="off"/>
+    	</div>
+    	<div class="inputBox">
+    		<i class="iconfont icon-mima"></i>
+    		<input type="password" class="inputArea" id="password" placeholder="password" autocomplete="off"/>
+    		<i class="iconfont icon-yanjing"></i>
+    	</div>
+			<button class="btns loginBtn">登录</button>
+    </div>
+  </body>
+  <script type="text/javascript">
+  	$(".loginBtn").on("click",function(){
+  		let password = md5($("#password").val());
+  		$.ajax({
+  			type:"post",
+  			url:"/users/login",
+  			data:{
+  				"username":$("#username").val(),
+  				"password":password
+  			},
+  			success:function(data){
+  				if(data.msg == "success"){
+					  localStorage.setItem('token',data.token);
+					  alert('登录成功');
+					  // 登录成功，跳转到首页
+					  location.href = '/';
+  				}else{
+  					alert('登录失败');
+  				}
+  				console.log(data);
+  			}
+  		});
+  	});
+  	
+  	$(".icon-yanjing").on("click",function(){
+  		if($("#password").attr("type")=="password"){
+  			$("#password").attr("type","text");
+  		}else{
+  			$("#password").attr("type","password");
+  		}
+  	});
+  </script>
+</html>

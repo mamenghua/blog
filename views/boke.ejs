@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>博客</title>
+	<link rel='stylesheet' href='/stylesheets/style.css' />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheets/boke.css" />
+	<script src="/javascripts/jquery-1.11.0.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/javascripts/xheditor/xheditor-1.2.2.min.js"></script>
+	<script src="/javascripts/xheditor/xheditor_lang/zh-cn.js"></script>
+</head>
+
+<body>
+	<div class="container">
+		<div class="form-group">
+			<div class="titleImgArea">
+				<img id="uploadPreview" src="/images/deafultImg.jpg">
+				<input id="titleImg" type="file" multiple="multiple"/>
+			</div>
+			<input type="text" class="form-control" id="title" placeholder="title" autocomplete="off" />
+		</div>
+		<!-- <div class="form-group titleImgArea">
+			<img id="uploadPreview">
+			<input id="titleImg" type="file" multiple="multiple"/>
+		</div> -->
+		
+		<div class="form-group">
+			<textarea class="form-control xheditor" id="content" cols="30" rows="10" placeholder="content"></textarea>
+		</div>
+		<button class="btn btn-success bokeBtn">发布文章</button>
+		<button class="btn btn-success modBtn" style="display: none;">保存文章</button>
+
+
+	</div>
+</body>
+<script src="/javascripts/fwb.js"></script>
+<script type="text/javascript">
+	// 判断地址栏，如果search不为空
+	if(location.search!=""){
+		$(".bokeBtn").css({"display":"none"});
+		$(".modBtn").css({"display":"block"});
+		let id = location.search.split("=")[1];
+		// 请求展示
+		$.ajax({
+			type:"post",
+			url:"/users/showBoke",
+			data:{
+				id:id
+			},
+			success:function(data){
+				console.log(data);
+				let info = data.msg[0];
+				console.log(info);
+				$("#title").val(info.title);
+				$("#content").val(info.content);
+				$(".modBtn").attr("data-id",info._id);
+			}
+		});
+
+		// 给修改按钮注册点击事件
+		$(".modBtn").on("click",function(){
+			$.ajax({
+				type:"post",
+				url:"/users/modBoke",
+				data:{
+					id:$(this).attr("data-id"),
+					title:$("#title").val(),
+					content:$("#content").val()
+				},
+				success:function(data){
+					console.log(data);
+					if(data){
+						alert(data.msg);
+						location.href='/';
+					}
+					
+				}
+			})
+		});
+	}
+
+	// 发布文章按钮
+	$(".bokeBtn").on("click", function () {
+		
+		let time = new Date();
+		$.ajax({
+			type: "post",
+			url: "/users/boke",
+			data: {
+				"title": $("#title").val(),
+				// "titleImg": $("#uploadPreview").attr("src"),
+				// "titleImg": $("#titleImg")[0].files[0].name,
+				"content": $("#content").val(),
+				"time": time
+			},
+			success: function (data) {
+				console.log(data);
+				alert(data.msg);
+				location.href = '/';
+			}
+		});
+	});
+	
+
+	// 图片改变，预览图跟着变化
+	$("#titleImg").on("change",function(){
+		let objUrl = getObjectURL(this.files[0]);
+		console.log("objUrl = "+objUrl) ;
+		if(objUrl){
+			$("#uploadPreview").attr("src",objUrl);
+		}
+	});
+
+
+	//建立一个可存取到该file的url
+	function getObjectURL(file) {
+		var url = null;
+		if (window.createObjectURL != undefined) { // basic
+			url = window.createObjectURL(file);
+		} else if (window.URL != undefined) { // mozilla(firefox)
+			url = window.URL.createObjectURL(file);
+		} else if (window.webkitURL != undefined) { // webkit or chrome
+			url = window.webkitURL.createObjectURL(file);
+		}
+		return url;
+	}
+
+</script>
+
+</html>
